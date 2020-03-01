@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+	<changeSet id="0" author="krishna">
+		<comment>initial version</comment>
+		<createTable tableName="PROJECT">
+			<column name="PRJ_ID" type="INTEGER" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="PRJ_NAME" type="VARCHAR(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRJ_DESCRIPTION" type="MEDIUMTEXT">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRJ_SEC_ID" type="INTEGER">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRJ_DOCLINK" type="MEDIUMTEXT">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRJ_DEPARTMENT" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRJ_CONTACTNAME" type="VARCHAR(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRJ_CONTACTEMAIL" type="VARCHAR(200)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="1" author="pallaviv">
+		<createTable tableName="SECTION">
+			<column name="SEC_ID" type="INTEGER" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="SEC_TITLE" type="VARCHAR(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEC_SUBTITLE" type="MEDIUMTEXT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addForeignKeyConstraint
+			baseColumnNames="PRJ_SEC_ID" baseTableName="PROJECT"
+			constraintName="FK_PROJECT_SECTION" onDelete="RESTRICT"
+			onUpdate="RESTRICT" referencedColumnNames="SEC_ID"
+			referencedTableName="SECTION" />
+    <insert tableName="SECTION">
+        <column name="SEC_ID" valueNumeric="1"/>
+        <column name="SEC_TITLE" value="Projects"/>
+        <column name="SEC_SUBTITLE" value="Projects offered by depts"/>
+    </insert>
+    <insert tableName="SECTION">
+        <column name="SEC_ID" valueNumeric="2"/>
+        <column name="SEC_TITLE" value="Hackathons"/>
+        <column name="SEC_SUBTITLE" value="Internal and external coding competitions"/>
+    </insert>
+    <insert tableName="SECTION">
+        <column name="SEC_ID" valueNumeric="3"/>
+        <column name="SEC_TITLE" value="Upskilling"/>
+        <column name="SEC_SUBTITLE" value="Courses sponsored by depts"/>
+    </insert>
+	</changeSet>
+	<changeSet id="2" author="krishna">
+		<createTable tableName="EMPLOYEE">
+			<column name="EMP_ID" type="INTEGER">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="EMP_GIVEN_NAME" type="VARCHAR(200)"
+				defaultValue="">
+				<constraints nullable="false" />
+			</column>
+			<column name="EMP_DISPLAY_NAME" type="VARCHAR(200)"
+				defaultValue="">
+				<constraints nullable="false" />
+			</column>
+			<column name="EMP_SURNAME" type="VARCHAR(200)" defaultValue="">
+				<constraints nullable="false" />
+			</column>
+			<column name="EMP_PRINCIPAL_NAME" type="VARCHAR(200)"
+				defaultValue="">
+				<constraints nullable="false" />
+			</column>
+			<column name="EMP_PHONE" type="VARCHAR(200)" defaultValue="">
+				<constraints nullable="false" />
+			</column>
+			<column name="EMP_EMAIL" type="VARCHAR(200)" defaultValue="">
+				<constraints nullable="false" />
+			</column>
+			<column name="EMP_JOB_TITLE" type="VARCHAR(200)"
+				defaultValue="">
+				<constraints nullable="false" />
+			</column>
+			<column name="EMP_REWARD_POINTS" type="INTEGER"
+				defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<createTable tableName="TEAM">
+			<column name="TEM_ID" type="INTEGER" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="TEM_NAME" type="VARCHAR(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TEM_STATUS"
+				type="ENUM('APPLIED', 'APPROVED', 'REJECTED', 'COMPLETED', 'ACCEPTED')"
+				defaultValue="APPLIED">
+				<constraints nullable="false" />
+			</column>
+			<column name="TEM_PRJ_ID" type="INTEGER">
+				<constraints nullable="false"
+					foreignKeyName="TEM_PRJ_ID" references="PROJECT(PRJ_ID)" />
+			</column>
+		</createTable>
+		<createTable tableName="TEAM_MEMBER">
+			<column name="TMM_TEM_ID" type="INTEGER">
+				<constraints nullable="false"
+					foreignKeyName="TMM_TEM_ID" references="TEAM(TEM_ID)" />
+			</column>
+			<column name="TMM_EMP_ID" type="INTEGER">
+				<constraints nullable="false"
+					foreignKeyName="TMM_EMP_ID" references="EMPLOYEE(EMP_ID)" />
+			</column>
+			<column name="TMM_GRANTED_REWARD_POINTS" type="INTEGER">
+			</column>
+		</createTable>
+		<createTable tableName="TEAM_STATUS_HISTORY">
+			<column name="TSH_ID" type="INTEGER" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="TSH_TEM_ID" type="INTEGER">
+				<constraints nullable="false"
+					foreignKeyName="TSH_TEM_ID" references="TEAM(TEM_ID)" />
+			</column>
+			<column name="TSH_STATUS"
+				type="ENUM('APPLIED', 'APPROVED', 'REJECTED', 'COMPLETED', 'ACCEPTED')">
+				<constraints nullable="false" />
+			</column>
+			<column name="TSH_DATE" type="datetime">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="3" author="krishna">
+		<createTable tableName="SKILL">
+			<column name="SKL_ID" type="INTEGER" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="SKL_NAME" type="VARCHAR(200)" defaultValue="">
+				<constraints unique="true" nullable="false" />
+			</column>
+		</createTable>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="1"/>
+        <column name="SKL_NAME" value="Java"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="2"/>
+        <column name="SKL_NAME" value="Machine Learning"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="3"/>
+        <column name="SKL_NAME" value="UIPath"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="4"/>
+        <column name="SKL_NAME" value="Chatbot"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="5"/>
+        <column name="SKL_NAME" value="BlockChain"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="6"/>
+        <column name="SKL_NAME" value="Data Science"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="7"/>
+        <column name="SKL_NAME" value="Pega"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="8"/>
+        <column name="SKL_NAME" value="AWS"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="9"/>
+        <column name="SKL_NAME" value="Sharepoint"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="10"/>
+        <column name="SKL_NAME" value="Sitecore"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="11"/>
+        <column name="SKL_NAME" value="Ionic"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="12"/>
+        <column name="SKL_NAME" value="MuleSoft"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="13"/>
+        <column name="SKL_NAME" value="Android"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="14"/>
+        <column name="SKL_NAME" value="MySQL"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="15"/>
+        <column name="SKL_NAME" value="REST"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="16"/>
+        <column name="SKL_NAME" value="NodeJS"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="17"/>
+        <column name="SKL_NAME" value="Unity"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="18"/>
+        <column name="SKL_NAME" value="Xcode"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="19"/>
+        <column name="SKL_NAME" value="AngularJS"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="20"/>
+        <column name="SKL_NAME" value="Dot Net"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="21"/>
+        <column name="SKL_NAME" value="Splunk"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="22"/>
+        <column name="SKL_NAME" value="Oracle BAM"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="23"/>
+        <column name="SKL_NAME" value="ELK"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="24"/>
+        <column name="SKL_NAME" value="ServiceNow"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="25"/>
+        <column name="SKL_NAME" value="ServiceHub"/>
+    </insert>
+    <insert tableName="SKILL">
+        <column name="SKL_ID" valueNumeric="26"/>
+        <column name="SKL_NAME" value="Oracle ESB"/>
+    </insert>
+		<createTable tableName="PROJECT_SKILL">
+			<column name="PSK_SKL_ID" type="INTEGER">
+				<constraints foreignKeyName="PSK_SKL_ID"
+					references="SKILL(SKL_ID)" nullable="false" />
+			</column>
+			<column name="PSK_PRJ_ID" type="INTEGER">
+				<constraints foreignKeyName="PSK_PRJ_ID"
+					references="PROJECT(PRJ_ID)" nullable="false" />
+			</column>
+		</createTable>
+		<addUniqueConstraint
+			columnNames="PSK_SKL_ID, PSK_PRJ_ID"
+			constraintName="PSK_UNIQUE_PRK_SKL" tableName="PROJECT_SKILL" />
+		<addUniqueConstraint
+			columnNames="TMM_TEM_ID, TMM_EMP_ID"
+			constraintName="TMM_UNIQUE_TEM_EMP" tableName="TEAM_MEMBER" />
+		<addColumn tableName="PROJECT">
+			<column name="PRJ_STATUS"
+				type="ENUM('OPEN', 'CLOSED', 'ONHOLD', 'COMPLETED')"
+				defaultValue="OPEN">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRJ_REWARD_POINTS" type="INTEGER" />
+			<column name="PRJ_START_DATE" type="datetime" />
+			<column name="PRJ_END_DATE" type="datetime" />
+			<column name="PRJ_CREATED_DATE" type="datetime" />
+			<column name="PRJ_UPDATED_DATE" type="datetime" />
+		</addColumn>
+		<addUniqueConstraint columnNames="PRJ_NAME"
+			constraintName="PRJ_UNIQUE_NAME" tableName="PROJECT" />
+		<modifyDataType tableName="TEAM"
+			columnName="TEM_STATUS"
+			newDataType="ENUM('APPLIED', 'APPROVED', 'REJECTED', 'STARTED', 'WITHDRAWN', 'COMPLETED', 'ACCEPTED')" />
+		<modifyDataType tableName="TEAM_STATUS_HISTORY"
+			columnName="TSH_STATUS"
+			newDataType="ENUM('APPLIED', 'APPROVED', 'REJECTED', 'STARTED', 'WITHDRAWN', 'COMPLETED', 'ACCEPTED')" />
+		<addColumn tableName="TEAM">
+			<column name="TEM_STATUS_REASON" type="VARCHAR(255)" />
+		</addColumn>
+		<addColumn tableName="TEAM_STATUS_HISTORY">
+			<column name="TSH_STATUS_REASON" type="VARCHAR(255)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="4" author="krishna">
+		<addColumn tableName="TEAM">
+			<column name="TEM_STATUS_DATE" type="datetime" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="5" author="kenrick">
+		<createTable tableName="EMPLOYEE_DEVICE">
+			<column name="EDV_ID" type="INTEGER" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="EDV_EMP_ID" type="INTEGER">
+				<constraints nullable="false"
+					foreignKeyName="EDV_EMP_ID" references="EMPLOYEE(EMP_ID)" />
+			</column>
+			<column name="EDV_DEVICE_ID" type="VARCHAR(200)"
+				defaultValue="">
+				<constraints nullable="false" />
+			</column>
+			<column name="EDV_PLATFORM" type="VARCHAR(200)"
+				defaultValue="">
+				<constraints nullable="false" />
+			</column>
+			<column name="EDV_TOKEN" type="VARCHAR(200)" defaultValue="">
+				<constraints nullable="false" />
+			</column>
+			<column name="EDV_SNS_ENDPOINT" type="VARCHAR(200)"
+				defaultValue="">
+				<constraints nullable="false" />
+			</column>
+			<column name="EDV_IS_DEV" type="BOOLEAN" defaultValue="false">
+				<constraints nullable="true" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="6" author="kenrick">
+		<addColumn tableName="EMPLOYEE">
+			<column name="EMP_PICTURE" type="MEDIUMTEXT" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="7" author="santhosh">
+		<createTable tableName="PROJECT_OWNER">
+			<column name="POW_PRJ_ID" type="INTEGER">
+				<constraints nullable="false"
+					foreignKeyName="POW_PRJ_ID" references="PROJECT(PRJ_ID)" />
+			</column>
+			<column name="POW_EMP_ID" type="INTEGER">
+				<constraints nullable="false"
+					foreignKeyName="POW_EMP_ID" references="EMPLOYEE(EMP_ID)" />
+			</column>
+		</createTable>
+	</changeSet>
+	 <changeSet id="8" author="santhosh">
+		<dropColumn columnName="PRJ_CONTACTNAME"
+			tableName="PROJECT" />
+		<dropColumn columnName="PRJ_CONTACTEMAIL"
+			tableName="PROJECT" />
+	</changeSet>
+	<changeSet id="9" author="anusha">
+		<addColumn tableName="EMPLOYEE">
+			<column name="EMP_DEPT_NAME" type="VARCHAR(200)" defaultValue="">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="10" author="santhosh">
+		<comment>initial version</comment>
+		<createTable tableName="PROJECT_H">
+			<column name="PRJH_ID" type="INTEGER" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="PRJ_ID" type="INTEGER">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRJ_NAME" type="VARCHAR(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRJ_DESCRIPTION" type="MEDIUMTEXT">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRJ_SEC_ID" type="INTEGER">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRJ_DOCLINK" type="MEDIUMTEXT">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRJ_DEPARTMENT" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRJ_STATUS"
+				type="ENUM('OPEN', 'CLOSED', 'ONHOLD', 'COMPLETED')"
+				defaultValue="OPEN">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRJ_REWARD_POINTS" type="INTEGER" />
+			<column name="PRJ_START_DATE" type="datetime" />
+			<column name="PRJ_END_DATE" type="datetime" />
+			<column name="PRJ_CREATED_DATE" type="datetime" />
+			<column name="PRJ_UPDATED_DATE" type="datetime" />
+			<column name="PRJH_ARCHIVED_DATE" type="datetime" />
+			<column name="PRJH_ARCHIVED_BY" type="INTEGER" />
+		</createTable>
+		<createTable tableName="PROJECT_OWNER_H">
+			<column name="POWH_ID" type="INTEGER" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="POW_PRJ_ID" type="INTEGER">
+				<constraints nullable="false" />
+			</column>
+			<column name="POW_EMP_ID" type="INTEGER">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<createTable tableName="PROJECT_SKILL_H">
+			<column name="PSKH_ID" type="INTEGER" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="PSK_SKL_ID" type="INTEGER">
+				<constraints nullable="false" />
+			</column>
+			<column name="PSK_PRJ_ID" type="INTEGER">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<createTable tableName="TEAM_MEMBER_H">
+			<column name="TMMH_ID" type="INTEGER" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="TMM_TEM_ID" type="INTEGER">
+				<constraints nullable="false"/>
+			</column>
+			<column name="TMM_EMP_ID" type="INTEGER">
+				<constraints nullable="false" />
+			</column>
+			<column name="TMM_GRANTED_REWARD_POINTS" type="INTEGER">
+			</column>
+		</createTable>
+		<createTable tableName="TEAM_H">
+			<column name="TEMH_ID" type="INTEGER" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="TEM_ID" type="INTEGER">
+				<constraints nullable="false" />
+			</column>
+			<column name="TEM_NAME" type="VARCHAR(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TEM_STATUS"
+				type="ENUM('APPLIED', 'APPROVED', 'REJECTED', 'STARTED', 'WITHDRAWN', 'COMPLETED', 'ACCEPTED')">
+				<constraints nullable="false" />
+			</column>
+			<column name="TEM_PRJ_ID" type="INTEGER">
+				<constraints nullable="false" />
+			</column>
+			<column name="TEM_STATUS_REASON" type="VARCHAR(255)" />
+			<column name="TEM_STATUS_DATE" type="datetime" />
+		</createTable>
+
+		<dropForeignKeyConstraint baseTableName="TEAM_STATUS_HISTORY" constraintName="TSH_TEM_ID"/>
+	</changeSet>
+	<changeSet id="11" author="santhosh">
+		<dropForeignKeyConstraint baseTableName="TEAM_MEMBER" constraintName="TMM_TEM_ID"/>
+		<addForeignKeyConstraint baseColumnNames="TMM_TEM_ID"
+            baseTableName="TEAM_MEMBER"
+            constraintName="TMM_TEM_ID"
+            onDelete="CASCADE"
+            referencedColumnNames="TEM_ID"
+            referencedTableName="TEAM"/>
+	</changeSet>
+	<changeSet id="12" author="santhosh">
+		<createTable tableName="PROGRAM_CHAMPION">
+			<column name="PC_ID" type="INTEGER" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="PC_DEPARTMENT" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PC_EMP_ID" type="INTEGER">
+				<constraints nullable="false" />
+			</column>
+			<column name="PC_CREATED_DATE" type="datetime" />
+			<column name="PC_CREATED_BY" type="INTEGER" />
+			<column name="PC_UPDATED_DATE" type="datetime" />
+			<column name="PC_UPDATED_BY" type="INTEGER" />
+		</createTable>
+	</changeSet>
+	<changeSet id="13" author="nikita">
+	<addColumn tableName="PROJECT">
+	        <column name="PRJ_APPLICANTS_GRADE" type="VARCHAR(20)"/>
+	        <column name="PRJ_RELEVANT_EXPERIENCE" type="VARCHAR(200)"/>
+	</addColumn>
+	<addColumn tableName="PROJECT_H">
+	        <column name="PRJ_APPLICANTS_GRADE" type="VARCHAR(20)"/>
+			<column name="PRJ_RELEVANT_EXPERIENCE" type="VARCHAR(200)"/>
+	</addColumn>
+	</changeSet>
+	<changeSet id="14" author="santhosh">
+		<addColumn tableName="TEAM">
+			<column name="TEM_CREATED_BY" type="INTEGER" />
+		</addColumn>
+		<addColumn tableName="TEAM_H">
+			<column name="TEM_CREATED_BY" type="INTEGER" />
+		</addColumn>
+		<addColumn tableName="TEAM_STATUS_HISTORY">
+			<column name="TSH_CREATED_BY" type="INTEGER" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="15" author="manimala">
+	<addColumn tableName="PROJECT">
+	        <column name="PRJ_TEAM_SIZE" type="INTEGER" defaultValueNumeric="1"/>
+	</addColumn>
+	<addColumn tableName="PROJECT_H">
+	        <column name="PRJ_TEAM_SIZE" type="INTEGER" defaultValueNumeric="1"/>
+	</addColumn>
+	</changeSet>
+	<changeSet id="16" author="nikita">
+	<addColumn tableName="TEAM">
+	        <column name="TEM_IS_OPEN" type="BOOLEAN" defaultValue="false"/>
+	</addColumn>
+	<addColumn tableName="TEAM_H">
+	        <column name="TEM_IS_OPEN" type="BOOLEAN" defaultValue="false"/>
+	</addColumn>
+	 </changeSet>
+	 <changeSet id="17" author="sharmila u">
+	<addColumn tableName="EMPLOYEE">
+	<column name="EMP_AVAILABILITY" type="BOOLEAN" defaultValue="true"/>
+	</addColumn>
+	</changeSet>
+</databaseChangeLog>
